@@ -1,30 +1,40 @@
-import resources.common.Game_Messages;
+import static resources.common.Game_Messages.*;
+
 import resources.models.board.GameBoard;
 import resources.models.board.TicTacToeBoard;
 import resources.models.players.CPU;
+import resources.models.players.Person;
 import resources.models.players.Player;
 
 import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
 
-        GameBoard board = new TicTacToeBoard();
-        Player player = new Player();
-        CPU CPU = new CPU();
+        System.out.println(WELCOME_MESSAGE);
 
-        System.out.println(Game_Messages.WELCOME_MESSAGE);
+        System.out.print(ENTER_PERSON_NAME);
+        String name = scanner.nextLine();
+        System.out.print(ENTER_PERSON_AGE);
+        int age = Integer.parseInt(scanner.nextLine());
+        System.out.print(ENTER_PERSON_COUNTRY);
+        String country = scanner.nextLine();
+        System.out.println(START_TIME);
+
+        GameBoard board = new TicTacToeBoard();
+        Player player = new Person(name, age, country);
+        Player CPU = new CPU();
 
         board.printBoard();
 
         while (true) {
-            System.out.print(Game_Messages.ENTER_POSITION_MESSAGE);
+            System.out.print(ENTER_POSITION_MESSAGE);
 
             int playerPosition = scanner.nextInt();
             while (player.contains(playerPosition) || CPU.contains(playerPosition)) {
-                System.out.print(Game_Messages.TAKEN_POSITION_MESSAGE);
+                System.out.print(TAKEN_POSITION_MESSAGE);
                 playerPosition = scanner.nextInt();
             }
             board.placePositionsOnTheBoard(playerPosition, "player");
@@ -41,9 +51,12 @@ public class Main {
             while (player.contains(CPUPosition) || CPU.contains(CPUPosition)) {
                 CPUPosition = random.nextInt(9) + 1;
             }
+
             board.placePositionsOnTheBoard(CPUPosition, "CPU");
             CPU.addPosition(CPUPosition);
 
+            System.out.println(OPPONENT_THINKING_MESSAGE);
+            Thread.sleep(1500);
             board.printBoard();
 
             result = checkWinner(player.getPositions(), CPU.getPositions());
@@ -57,6 +70,7 @@ public class Main {
 
 
     }
+
     private static String checkWinner(Collection<Integer> playerPositions, Collection<Integer> CPUPositions) {
 
         List<Integer> topRow = Arrays.asList(1, 2, 3);
